@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Registro_Detalle_Tickets.Api.DAL;
 using Registro_Detalle_Tickets.Shared.Models;
 
-namespace Registro_Detalle_Tickets.Api.Controllers
+
+
+
+
+namespace SistemaTicketsAssembly.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
