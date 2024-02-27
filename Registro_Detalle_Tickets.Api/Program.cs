@@ -29,7 +29,13 @@ namespace Registro_Detalle_Tickets.Api
                 app.UseSwaggerUI();
             }
 
-            
+            //CORS
+            app.UseCors(options =>
+            {
+                options.AllowAnyOrigin();
+                options.AllowAnyHeader();
+                options.AllowAnyMethod();
+            });
 
             app.UseHttpsRedirection();
 
