@@ -1,4 +1,7 @@
 
+using Microsoft.EntityFrameworkCore;
+using Registro_Detalle_Tickets.Api.DAL;
+
 namespace Registro_Detalle_Tickets.Api
 {
     public class Program
@@ -14,6 +17,9 @@ namespace Registro_Detalle_Tickets.Api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            var ConStr = builder.Configuration.GetConnectionString("ConStr");
+            builder.Services.AddDbContext<Contexto>(option => option.UseSqlite(ConStr));
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -22,6 +28,8 @@ namespace Registro_Detalle_Tickets.Api
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            
 
             app.UseHttpsRedirection();
 
