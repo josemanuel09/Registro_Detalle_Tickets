@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Registro_Detalle_Tickets", "Registro_Detalle_Tickets\Registro_Detalle_Tickets.csproj", "{593546A9-A361-4980-9D4B-3DF4D1C4FF8A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Registro_Detalle_Tickets", "Registro_Detalle_Tickets\Registro_Detalle_Tickets.csproj", "{593546A9-A361-4980-9D4B-3DF4D1C4FF8A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Registro_Detalle_Tickets.Api", "Registro_Detalle_Tickets.Api\Registro_Detalle_Tickets.Api.csproj", "{BEE78661-D3C1-4F4C-9D22-87602EFBA4B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Registro_Detalle_Tickets.Api", "Registro_Detalle_Tickets.Api\Registro_Detalle_Tickets.Api.csproj", "{BEE78661-D3C1-4F4C-9D22-87602EFBA4B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Registro_Detalle_Tickets.Shared", "Registro_Detalle_Tickets.Shared\Registro_Detalle_Tickets.Shared.csproj", "{73C33C7F-B527-4FF3-84FD-C53CC902454F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Registro_Detalle_Tickets.Shared", "Registro_Detalle_Tickets.Shared\Registro_Detalle_Tickets.Shared.csproj", "{73C33C7F-B527-4FF3-84FD-C53CC902454F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
