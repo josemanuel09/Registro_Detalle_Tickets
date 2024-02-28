@@ -2,6 +2,8 @@
 @page "/Create/{TicketId:int}"
 @inject HttpClient httpClient
 @inject NavigationManager navigationManager
+@inject IJSRuntime jsRuntime
+
 <EditForm Model="tickets" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
     <div class="card">
@@ -39,13 +41,13 @@
                 <ValidationMessage For="@(() => tickets.Descripcion)" />
             </div>
         </div>
-        <div class="card-footer ">
+        <div class="card-footer text-center ">
 
-            <div class="d-flex">
-                <a href="/Index" type="button" class="btn btn-secondary bi bi-arrow-left-square-fill" @onclick="Nuevo">Volver atr&aacute;s </a>
-                <button type="button" class="btn btn-primary bi bi-file-earmark-plus-fill" @onclick="Nuevo">Nuevo </button>
-                <button class="btn btn-success bi-floppy-fill">Guardar </button>
-            </div>
+            <button class="btn btn-success bi-floppy-fill">Guardar </button>
+            <button type="button" class="btn btn-primary bi bi-file-earmark-plus-fill" @onclick="Nuevo">Nuevo </button>
+            <a href="/Index" type="button" class="btn btn-secondary bi bi-arrow-left-square-fill" @onclick="Nuevo">Volver atr&aacute;s </a>
+
+           
 
         </div>
     </div>
@@ -76,7 +78,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var detalle in listaDetalles)
+                @foreach (var detalle in tickets.TicketsDetalle)
                 {
                     var ticketEncontrado = BuscarTicket(detalle.TicketId);
                     <tr>
@@ -103,8 +105,8 @@
     public bool mensajeVacio;
     public bool emisorVacio;
 
-public int resultado { get; set; }
-public string? mensaje { get; set; }
+    public int resultado { get; set; }
+    public string? mensaje { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -124,7 +126,6 @@ public string? mensaje { get; set; }
             return tickets = ticketEncontrado;
         return new Tickets();
     }
-
     public async Task Buscar()
     {
         var ticketIdEncontrado = (await httpClient.GetFromJsonAsync<List<Tickets>>($"api/Tickets"))!
@@ -141,21 +142,25 @@ public string? mensaje { get; set; }
         }
 
     }
-
     public async Task Guardar()
     {
-        var response = await httpClient.PutAsJsonAsync($"api/Tickets/{TicketId}", tickets);
+        if (!string.IsNullOrEmpty(Detalles.Mensaje) && !string.IsNullOrEmpty(Detalles.Emisor))
+        { 
+            tickets.TicketsDetalle.Add(Detalles);
+
+        }
+        var response = await httpClient.PostAsJsonAsync($"api/Tickets", tickets);
         if (!response.IsSuccessStatusCode)
         {
             return;
         }
 
 
-        StateHasChanged();
+        //Nuevo();
+        //StateHasChanged();
+        // navigationManager.NavigateTo("/Index");
 
     }
-
-
     public void Nuevo()
     {
         tickets = new Tickets();
@@ -172,6 +177,7 @@ public string? mensaje { get; set; }
             return;
         }
         Nuevo();
+        navigationManager.NavigateTo("/Index");
     }
 
     public bool Validar()
@@ -183,15 +189,45 @@ public string? mensaje { get; set; }
 
     public async Task AgregarDetalle()
     {
-        if(tickets != null)
+        var response = await httpClient.PostAsJsonAsync($"api/Tickets", tickets);
+        if (response.IsSuccessStatusCode)
         {
-            Detalles.TicketId = tickets.TicketId;
-            listaDetalles.Add(Detalles);
-            Detalles = new TicketsDetalle();
+            var detalle = await response.Content.ReadFromJsonAsync<Tickets>();
+
+            Detalles.TicketId = detalle.TicketId;
+            tickets.TicketId = detalle.TicketId;
+        
+            if (!string.IsNullOrEmpty(Detalles.Mensaje) && !string.IsNullOrEmpty(Detalles.Emisor))
+        {
+                 tickets.TicketsDetalle.Add(Detalles);
+
+            }
+        // var detalleResponse = await httpClient.PostAsJsonAsync($"api/Tickets", tickets);
+        // if (detalleResponse.IsSuccessStatusCode)
+        // {    
+        //     listaDetalles.Add(Detalles);
+        //     Detalles = new TicketsDetalle();
+
+        // }
+               mensaje = "Error al guardar el detalle";
+            
+        }
+        else
+        {
+            mensaje = "No deben haber campos vacios";
+        }
+    }
+    public async Task Filtrado(List<TicketsDetalle> detalleList)
+    {
+        List<TicketsDetalle> filtro = new List<TicketsDetalle>();
+        foreach (var detalle in detalleList)
+        {
+            if (detalle.TicketId == Detalles.TicketId)
+                filtro.Add(detalle);
         }
 
-
-        
+        if (filtro.Count != 0)
+            listaDetalles = filtro;
     }
 
     public async Task RemoverDetalle(TicketsDetalle detalle)
@@ -200,3 +236,5 @@ public string? mensaje { get; set; }
         listaDetalles.Remove(detalle);
     }
 }
+
+
