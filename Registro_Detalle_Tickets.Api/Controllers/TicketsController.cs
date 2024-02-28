@@ -78,26 +78,52 @@ namespace SistemaTicketsAssembly.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Tickets>> PostTickets(Tickets tickets)
         {
-            _context.Tickets.Add(tickets);
+            if (tickets.TicketId <= 0 || !TicketsExists(tickets.TicketId))
+            {
+                _context.Tickets.Add(tickets);
+            }
+            else
+            {
+                _context.Tickets.Update(tickets);
+            }
             await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetTickets", new { id = tickets.TicketId }, tickets);
+            return Ok(tickets);
         }
 
         // DELETE: api/Tickets/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTickets(int id)
         {
+            if (_context.Tickets == null)
+            {
+                return NotFound();
+            }
             var tickets = await _context.Tickets.FindAsync(id);
             if (tickets == null)
             {
                 return NotFound();
             }
-
             _context.Tickets.Remove(tickets);
             await _context.SaveChangesAsync();
-
             return NoContent();
+        }
+
+        // DELETE: api/Tickets
+        [HttpDelete("EliminarDetalle/{id}")]
+        public async Task<IActionResult> DeleteDetalle(int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest();
+            }
+            var Detalle = await _context.Tickets.FirstOrDefaultAsync(t => t.TicketId == id);
+            if (Detalle is null)
+            {
+                return NotFound();
+            }
+            _context.Tickets.Remove(Detalle);
+            await _context.SaveChangesAsync();
+            return Ok();
         }
 
         private bool TicketsExists(int id)
