@@ -53,6 +53,9 @@
                     <th>Asunto</th>
                     <th>Descripci&oacute;n</th>
                     <th>Fecha</th>
+                    <th>Eliminar</th>
+                    <th>Editar</th>
+                    <th>Detalles</th>
                     <th></th>
                 </tr>
             </thead>
@@ -67,8 +70,13 @@
                         <td>@item.Fecha</td>
                         <td>
                             <a href="/EliminarTickets/@item.TicketId" class="btn btn-danger bi bi-trash-fill"></a>
+                        </td>
+                        <td>
                             <a href="/EditTickets/@item.TicketId" class="btn btn-primary bi-box-arrow-up-right"></a>
-                            <a href="/Details/@item.TicketId" class="btn btn-warning bi bi-info-square"></a>
+                        </td>
+                        <td>
+                            <a href="/Details/@item.TicketId" class="btn btn-primary bi bi-info-square"></a>
+
                         </td>
                     </tr>
                 }
