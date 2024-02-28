@@ -51,6 +51,12 @@
 
         </div>
     </div>
+    @if (!string.IsNullOrEmpty(ErrorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            @ErrorMessage
+        </div>
+    }
 
     @*Detalles:*@
     <div class="card card-header mt-5">
@@ -77,6 +83,7 @@
                     <th></th>
                 </tr>
             </thead>
+            
             <tbody>
                 @foreach (var detalle in tickets.TicketsDetalle)
                 {
@@ -110,6 +117,8 @@
     public string? mensaje { get; set; }
     public string Nombre { get; set; } = string.Empty;
     public string MensajeTicket { get; set; } = string.Empty;
+    public string ErrorMessage { get; set; }
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -193,15 +202,24 @@
 
     public void AgregarDetalle()
     {
-        tickets.TicketsDetalle.Add(new TicketsDetalle()
-            {
-                Emisor = Nombre,
-                Mensaje = MensajeTicket
-            });
+        if (!string.IsNullOrWhiteSpace(Nombre) && !string.IsNullOrWhiteSpace(MensajeTicket))
+        {
+            tickets.TicketsDetalle.Add(new TicketsDetalle()
+                {
+                    Emisor = Nombre,
+                    Mensaje = MensajeTicket
+                });
 
-        Nombre = string.Empty;
-        MensajeTicket = string.Empty;
-        StateHasChanged();
+            Nombre = string.Empty;
+            MensajeTicket = string.Empty;
+            ErrorMessage = string.Empty; // Limpiamos el mensaje de error si hubo una entrada exitosa.
+            StateHasChanged();
+        }
+        else
+        {
+            ErrorMessage = "Ambos campos (Nombre y Mensaje) son requeridos.";
+            StateHasChanged();
+        }
     }
     // public async Task AgregarDetalle()
     // {
@@ -246,10 +264,10 @@
             listaDetalles = filtro;
     }
 
-    public async Task RemoverDetalle(TicketsDetalle detalle)
+    public async Task RemoverDetalle(TicketsDetalle details)
     {
-        Detalles = detalle;
-        listaDetalles.Remove(detalle);
+        tickets.TicketsDetalle.Remove(details);
+        StateHasChanged();
     }
 }
 
