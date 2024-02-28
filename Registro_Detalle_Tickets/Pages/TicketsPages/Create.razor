@@ -57,13 +57,13 @@
         <h3>Detalle del ticket</h3>
         <div>
             <label class="fw-bold mt-3"> Nombre</label>
-            <InputText @bind-Value="Detalles.Emisor" class="form-control" placeholder="Enel R. Almonte."></InputText>
-            <ValidationMessage For="@(() => Detalles.Emisor)" />
+            <InputText @bind-Value="Nombre" class="form-control" placeholder="Enel R. Almonte."></InputText>
+            <ValidationMessage For="@(() => Nombre)" />
         </div>
         <div>
             <label class="fw-bold mt-3">Mensaje</label>
-            <InputTextArea @bind-Value="Detalles.Mensaje" class="form-control" placeholder="Agregue un mensaje."></InputTextArea>
-            <ValidationMessage For="@(() => Detalles.Mensaje)" />
+            <InputTextArea @bind-Value="MensajeTicket" class="form-control" placeholder="Agregue un mensaje."></InputTextArea>
+            <ValidationMessage For="@(() => MensajeTicket)" />
         </div>
         <div class="card-footer d-flex justify-content-center">
             <button type="button" @onclick="AgregarDetalle" class="btn btn-outline-success">Agregar</button>
@@ -105,8 +105,11 @@
     public bool mensajeVacio;
     public bool emisorVacio;
 
+
     public int resultado { get; set; }
     public string? mensaje { get; set; }
+    public string Nombre { get; set; } = string.Empty;
+    public string MensajeTicket { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -187,36 +190,49 @@
         return mensajeVacio || emisorVacio || Detalles.Emisor!.Any(Char.IsDigit);
     }
 
-    public async Task AgregarDetalle()
+
+    public void AgregarDetalle()
     {
-        var response = await httpClient.PostAsJsonAsync($"api/Tickets", tickets);
-        if (response.IsSuccessStatusCode)
-        {
-            var detalle = await response.Content.ReadFromJsonAsync<Tickets>();
+        tickets.TicketsDetalle.Add(new TicketsDetalle()
+            {
+                Emisor = Nombre,
+                Mensaje = MensajeTicket
+            });
 
-            Detalles.TicketId = detalle.TicketId;
-            tickets.TicketId = detalle.TicketId;
-        
-            if (!string.IsNullOrEmpty(Detalles.Mensaje) && !string.IsNullOrEmpty(Detalles.Emisor))
-        {
-                 tickets.TicketsDetalle.Add(Detalles);
-
-            }
-        // var detalleResponse = await httpClient.PostAsJsonAsync($"api/Tickets", tickets);
-        // if (detalleResponse.IsSuccessStatusCode)
-        // {    
-        //     listaDetalles.Add(Detalles);
-        //     Detalles = new TicketsDetalle();
-
-        // }
-               mensaje = "Error al guardar el detalle";
-            
-        }
-        else
-        {
-            mensaje = "No deben haber campos vacios";
-        }
+        Nombre = string.Empty;
+        MensajeTicket = string.Empty;
+        StateHasChanged();
     }
+    // public async Task AgregarDetalle()
+    // {
+    //     var response = await httpClient.PostAsJsonAsync($"api/Tickets", tickets);
+    //     if (response.IsSuccessStatusCode)
+    //     {
+    //         var detalle = await response.Content.ReadFromJsonAsync<Tickets>();
+
+    //         Detalles.TicketId = detalle.TicketId;
+    //         tickets.TicketId = detalle.TicketId;
+        
+    //         if (!string.IsNullOrEmpty(Detalles.Mensaje) && !string.IsNullOrEmpty(Detalles.Emisor))
+    //         {
+    //              tickets.TicketsDetalle.Add(Detalles);
+
+    //         }
+    //     // var detalleResponse = await httpClient.PostAsJsonAsync($"api/Tickets", tickets);
+    //     // if (detalleResponse.IsSuccessStatusCode)
+    //     // {    
+    //     //     listaDetalles.Add(Detalles);
+    //     //     Detalles = new TicketsDetalle();
+
+    //     // }
+    //            mensaje = "Error al guardar el detalle";
+            
+    //     }
+    //     else
+    //     {
+    //         mensaje = "No deben haber campos vacios";
+    //     }
+    // }
     public async Task Filtrado(List<TicketsDetalle> detalleList)
     {
         List<TicketsDetalle> filtro = new List<TicketsDetalle>();
