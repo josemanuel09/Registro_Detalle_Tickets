@@ -1,0 +1,81 @@
+﻿@page "/Details"
+@page "/Details/{TicketId:int}"
+@inject HttpClient httpClient
+
+<PageTitle>Eliminar Ticket</PageTitle>
+
+<div class="card shadow">
+    <div class="card-header">
+        <h3>Informaci&oacute;n del ticket</h3>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <p>-ID: @tickets.TicketId</p>
+                <p>-Fecha: @tickets.Fecha.ToString("dd/MM/yyyy")</p>
+                <p>-Asunto: @tickets.Asunto</p>
+                <p>-Solicitado Por: @tickets.SolicitadoPor</p>
+                <p>-Descripci&oacute;n: @tickets.Descripcion</p>
+            </div>
+
+        </div>
+        <div class="card-header">
+            <h3>Detalles del ticket</h3>
+        </div>
+        <table class="table table-bordered table-hover">
+
+            <thead>
+
+                <tr>
+                    <th>TicketId</th>
+                    <th>Emisor</th>
+                    <th>Mensaje</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var detalle in ListaDetalles)
+                {
+                    <tr>
+                        <td>@detalle.TicketId</td>
+                        <td>@detalle.Emisor</td>
+                        <td>@detalle.Mensaje</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer">
+        <a href="/Index" class="btn btn-secondary bi bi-arrow-left-square-fill ms-auto">Volver</a>
+    </div>
+</div>
+@code {
+
+    [Parameter]
+    public int TicketId { get; set; }
+    public Tickets tickets { get; set; } = new Tickets();
+    public List<TicketsDetalle> ListaDetalles = new List<TicketsDetalle>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (TicketId > 0)
+        {
+            var ticketEncontrado = await httpClient.GetFromJsonAsync<Tickets>($"api/Tickets/{TicketId}");
+            if (ticketEncontrado != null)
+            {
+                tickets = ticketEncontrado;
+            }
+
+        }
+    }
+
+    public async Task Buscar()
+    {
+        var ticketEncontrado = await httpClient.GetFromJsonAsync<Tickets>($"api/Tickets/{tickets.TicketId}");
+        if (ticketEncontrado != null)
+        {
+            tickets = ticketEncontrado;
+        }
+    }
+
+
+}
