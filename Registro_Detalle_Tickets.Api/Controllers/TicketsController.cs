@@ -32,7 +32,9 @@ namespace SistemaTicketsAssembly.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Tickets>> GetTickets(int id)
         {
-            var tickets = await _context.Tickets.FindAsync(id);
+            var tickets = await _context.Tickets
+                .Include(t => t.TicketsDetalle)  // Aquí incluimos los detalles del ticket
+                .FirstOrDefaultAsync(t => t.TicketId == id);
 
             if (tickets == null)
             {
@@ -132,3 +134,4 @@ namespace SistemaTicketsAssembly.Api.Controllers
         }
     }
 }
+
