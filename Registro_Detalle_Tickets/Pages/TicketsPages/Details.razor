@@ -19,30 +19,7 @@
             </div>
 
         </div>
-        <div class="card-header">
-            <h3>Detalles del ticket</h3>
-        </div>
-        <table class="table table-bordered table-hover">
-
-            <thead>
-
-                <tr>
-                    <th>TicketId</th>
-                    <th>Emisor</th>
-                    <th>Mensaje</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var detalle in ListaDetalles)
-                {
-                    <tr>
-                        <td>@detalle.TicketId</td>
-                        <td>@detalle.Emisor</td>
-                        <td>@detalle.Mensaje</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+       
     </div>
     <div class="card-footer">
         <a href="/Index" class="btn btn-secondary bi bi-arrow-left-square-fill ms-auto">Volver</a>
@@ -63,8 +40,8 @@
             if (ticketEncontrado != null)
             {
                 tickets = ticketEncontrado;
+                ListaDetalles = tickets.TicketsDetalle.ToList(); // Aquí convertimos ICollection a List
             }
-
         }
     }
 
