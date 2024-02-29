@@ -16,7 +16,7 @@
     <div class="card">
         <div class="card-body">
             <div class="row">
-                <p>-ID: @tickets.TicketId</p>
+                <p>-TicketId: @tickets.TicketId</p>
                 <p>-Fecha: @tickets.Fecha.ToString("dd/MM/yyyy")</p>
                 <p>-Asunto: @tickets.Asunto</p>
                 <p>-Solicitado Por: @tickets.SolicitadoPor</p>
@@ -28,9 +28,7 @@
             <h3>Detalles del ticket</h3>
         </div>
         <table class="table table-bordered table-hover">
-
             <thead>
-
                 <tr>
                     <th>TicketId</th>
                     <th>Emisor</th>
@@ -38,9 +36,8 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var detalle in tickets.TicketsDetalle)
+                @foreach (var detalle in ListaDetalles)
                 {
-                    var ticketEncontrado = BuscarTicket(detalle.TicketId);
                     <tr>
                         <td>@detalle.TicketId</td>
                         <td>@detalle.Emisor</td>
@@ -70,8 +67,8 @@
             if (ticketEncontrado != null)
             {
                 tickets = ticketEncontrado;
+                ListaDetalles = tickets.TicketsDetalle.ToList(); // Aquí convertimos ICollection a List
             }
-
         }
     }
     private async Task<Tickets> BuscarTicket(int ticketId)

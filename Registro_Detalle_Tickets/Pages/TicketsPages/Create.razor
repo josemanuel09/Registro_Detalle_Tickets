@@ -50,13 +50,15 @@
            
 
         </div>
+        
+        @if (!string.IsNullOrEmpty(MensajeExito))
+        {
+            <div class=" alert alert-success" role="alert">
+                @MensajeExito
+
+            </div>
+        }
     </div>
-    @if (!string.IsNullOrEmpty(ErrorMessage))
-    {
-        <div class="alert alert-danger" role="alert">
-            @ErrorMessage
-        </div>
-    }
 
     @*Detalles:*@
     <div class="card card-header mt-5">
@@ -74,6 +76,12 @@
         <div class="card-footer d-flex justify-content-center">
             <button type="button" @onclick="AgregarDetalle" class="btn btn-outline-success">Agregar</button>
         </div>
+        @if (!string.IsNullOrEmpty(MensajeError))
+        {
+            <div class="alert alert-danger" role="alert">
+                @MensajeError
+            </div>
+        }
         <table class='table table-bordered table-hover'>
             <thead>
                 <tr>
@@ -83,7 +91,6 @@
                     <th></th>
                 </tr>
             </thead>
-            
             <tbody>
                 @foreach (var detalle in tickets.TicketsDetalle)
                 {
@@ -112,13 +119,12 @@
     public bool mensajeVacio;
     public bool emisorVacio;
 
-
+    public string MensajeError { get; set; }
+    public string MensajeExito { get; set; }
     public int resultado { get; set; }
     public string? mensaje { get; set; }
     public string Nombre { get; set; } = string.Empty;
     public string MensajeTicket { get; set; } = string.Empty;
-    public string ErrorMessage { get; set; }
-
 
     protected override async Task OnInitializedAsync()
     {
@@ -199,58 +205,33 @@
         return mensajeVacio || emisorVacio || Detalles.Emisor!.Any(Char.IsDigit);
     }
 
-
     public void AgregarDetalle()
     {
         if (!string.IsNullOrWhiteSpace(Nombre) && !string.IsNullOrWhiteSpace(MensajeTicket))
         {
-            tickets.TicketsDetalle.Add(new TicketsDetalle()
+            var nuevoDetalle = new TicketsDetalle()
                 {
+                    TicketId = tickets.TicketId, // Aquí estamos estableciendo el TicketId del detalle
                     Emisor = Nombre,
                     Mensaje = MensajeTicket
-                });
+                };
+
+            tickets.TicketsDetalle.Add(nuevoDetalle);
 
             Nombre = string.Empty;
             MensajeTicket = string.Empty;
-            ErrorMessage = string.Empty; // Limpiamos el mensaje de error si hubo una entrada exitosa.
+            MensajeError = string.Empty; // Limpiamos el mensaje de error si hubo una entrada exitosa.
+            MensajeExito = "El Ticket ha sido agregado de manera exitosa";
             StateHasChanged();
         }
         else
         {
-            ErrorMessage = "Ambos campos (Nombre y Mensaje) son requeridos.";
+            MensajeError = "Ambos campos (Nombre y Mensaje) son requeridos.";
             StateHasChanged();
         }
     }
-    // public async Task AgregarDetalle()
-    // {
-    //     var response = await httpClient.PostAsJsonAsync($"api/Tickets", tickets);
-    //     if (response.IsSuccessStatusCode)
-    //     {
-    //         var detalle = await response.Content.ReadFromJsonAsync<Tickets>();
 
-    //         Detalles.TicketId = detalle.TicketId;
-    //         tickets.TicketId = detalle.TicketId;
-        
-    //         if (!string.IsNullOrEmpty(Detalles.Mensaje) && !string.IsNullOrEmpty(Detalles.Emisor))
-    //         {
-    //              tickets.TicketsDetalle.Add(Detalles);
 
-    //         }
-    //     // var detalleResponse = await httpClient.PostAsJsonAsync($"api/Tickets", tickets);
-    //     // if (detalleResponse.IsSuccessStatusCode)
-    //     // {    
-    //     //     listaDetalles.Add(Detalles);
-    //     //     Detalles = new TicketsDetalle();
-
-    //     // }
-    //            mensaje = "Error al guardar el detalle";
-            
-    //     }
-    //     else
-    //     {
-    //         mensaje = "No deben haber campos vacios";
-    //     }
-    // }
     public async Task Filtrado(List<TicketsDetalle> detalleList)
     {
         List<TicketsDetalle> filtro = new List<TicketsDetalle>();
@@ -264,9 +245,10 @@
             listaDetalles = filtro;
     }
 
-    public async Task RemoverDetalle(TicketsDetalle details)
+
+    public async Task RemoverDetalle(TicketsDetalle detalle)
     {
-        tickets.TicketsDetalle.Remove(details);
+        tickets.TicketsDetalle.Remove(detalle);
         StateHasChanged();
     }
 }

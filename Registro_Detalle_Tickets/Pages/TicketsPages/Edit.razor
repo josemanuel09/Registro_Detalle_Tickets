@@ -45,6 +45,13 @@
                 <button class="btn btn-success bi-floppy-fill">Editar</button>
             </div>
         </div>
+        @if (!string.IsNullOrEmpty(MensajeExito))
+        {
+            <div class=" alert alert-success" role="alert">
+                @MensajeExito
+
+            </div>
+        }
     </div>
 
     @*Detalles:*@
@@ -63,6 +70,12 @@
         <div class="card-footer d-flex justify-content-center">
             <button type="button" @onclick="AgregarDetalle" class="btn btn-outline-success">Agregar</button>
         </div>
+        @if (!string.IsNullOrEmpty(MensajeError))
+        {
+            <div class="alert alert-danger" role="alert">
+                @MensajeError
+            </div>
+        }
         <table class='table table-bordered table-hover'>
             <thead>
                 <tr>
@@ -97,6 +110,9 @@
     public List<TicketsDetalle> listaDetalles = new List<TicketsDetalle>();
     public string Nombre { get; set; } = string.Empty;
     public string MensajeTicket { get; set; } = string.Empty;
+    public string MensajeError { get; set; }
+    public string MensajeExito { get; set; }
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -174,38 +190,24 @@
 
     public void AgregarDetalle()
     {
-        tickets.TicketsDetalle.Add(new TicketsDetalle()
-            {
-                Emisor = Nombre,
-                Mensaje = MensajeTicket
-            });
+        if (!string.IsNullOrWhiteSpace(Nombre) && !string.IsNullOrWhiteSpace(MensajeTicket))
+        {
+            var nuevoDetalle = new TicketsDetalle()
+                {
+                    TicketId = tickets.TicketId, // Aquí estamos estableciendo el TicketId del detalle
+                    Emisor = Nombre,
+                    Mensaje = MensajeTicket
+                };
 
-        Nombre = string.Empty;
-        MensajeTicket = string.Empty;
-        StateHasChanged();
+            tickets.TicketsDetalle.Add(nuevoDetalle);
+
+            Nombre = string.Empty;
+            MensajeTicket = string.Empty;
+            MensajeError = string.Empty; // Limpiamos el mensaje de error si hubo una entrada exitosa.
+            MensajeExito = "El Ticket ha sido agregado de manera exitosa";
+            StateHasChanged();
+        }
     }
-    // public async Task AgregarDetalle()
-    // {
-    //     var response = await httpClient.PostAsJsonAsync("api/TicketsDetalles", Detalles);
-    //     if (!response.IsSuccessStatusCode)
-    //     {
-    //         return;
-    //     }
-    //     var ticketDevuelto = await response.Content.ReadFromJsonAsync<TicketsDetalle>();
-    //     if (ticketDevuelto is not null)
-    //     {
-    //         Detalles.TicketId = tickets.TicketId;
-    //         Detalles = ticketDevuelto;
-    //         listaDetalles.Add(Detalles);
-
-    //         var ticketIdGuardado = Detalles.TicketId;
-
-    //         Detalles = new TicketsDetalle();
-    //         Detalles.TicketId = ticketIdGuardado;
-    //         StateHasChanged();
-    //     }
-    // }
-
     public async Task RemoverDetalle(TicketsDetalle details)
     {
         tickets.TicketsDetalle.Remove(details);
